@@ -34,7 +34,7 @@ def capture_video_2fps(model):
     cv2.destroyAllWindows()
 
 def read_video_2fps(model):
-    cap = cv2.VideoCapture('test_vid/IMG-5696.MOV')
+    cap = cv2.VideoCapture('C:/Users/rayendhahri/Desktop/mobile_robotics/track/test_vid/IMG-5696.MOV')
     cap.set(cv2.CAP_PROP_FPS, 30)
     while True:
         ret, frame = cap.read()
