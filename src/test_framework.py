@@ -36,7 +36,16 @@ def test_image():
     obstacle_vertices = np.array([[0,0],[0,0]]) # will be replaced 
     initial_thymio_pos = np.array([[0,0],[0,0]]) # will be replaced
     goal_pos = np.array([[0,0],[0,0]]) # will be replaced
+    # plan trajectory from initial_thymio_pos to goal_pos avoiding obstacles
     obj_terrain = Terrain()
+    obj_terrain.add_node(initial_thymio_pos,type="start",neighbours=[])
+    obj_terrain.add_node(goal_pos,type="end",neighbours=[])
+    for i in range(len(obstacle_vertices)):
+        obj_terrain.add_node(obstacle_vertices[i])
+    obj_terrain.complete_visibility()
+    obj_terrain.complete_cost()
+
+
 
 
 if __name__ == '__main__':
