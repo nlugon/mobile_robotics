@@ -4,12 +4,13 @@ import random
 import numpy as np
 
 class Node:
-    def __init__(self,position,id,type="node",neighbours=[]):
+    def __init__(self,position,id,type="node",neighbours=[],obstacle_id=-1):
         #properties
         self.position = position #[x,y]
         self.id = id #if = 0 it's the start node
         self.type = type #types: "node", "start", "end"
         self.point2d = Point(*tuple(position))
+        self.obstacle_id = obstacle_id
 
         #connections
         self.access_cost = 0
@@ -17,7 +18,7 @@ class Node:
         self.visibility_list = neighbours #contains the
 
     def print(self):
-        print("== Node {0} : Position:{1} - Type:{2} - Cost:{4} with node {5} - Visibility:{3}".format(self.id,self.position,self.type,self.visibility_list,self.access_cost,self.access_node))
+        print("== Node {0} : Position:{1} - Type:{2} - Cost:{4} with node {5} - Visibility:{3} - Obstacle: {6}".format(self.id,self.position,self.type,self.visibility_list,self.access_cost,self.access_node,self.obstacle_id))
     
     def plot(self,color="green"):
         plt.scatter(*tuple(self.position),color=color)
@@ -29,19 +30,20 @@ class Terrain:
         self.list_obstacles = [] #list of sympy.Polygon that defines the obstacles
         self.size_nodes = 0
 
-    def add_node(self,position,type="node",neighbours=[]):
-        self.list_nodes.append(Node(position,self.size_nodes,type,neighbours))
+    def add_node(self,position,type="node",neighbours=[],obstacle_id=-1):
+        self.list_nodes.append(Node(position,self.size_nodes,type,neighbours,obstacle_id))
         self.size_nodes += 1
 
     def add_obstacle(self,list_vertices):
+        current_obstacle_id = len(self.list_obstacles)
         first_id = self.size_nodes
         last_id = self.size_nodes + len(list_vertices)-1
         #add first node of obstacle
-        self.add_node(list_vertices[0],neighbours=[last_id,first_id+1])
+        self.add_node(list_vertices[0],neighbours=[last_id,first_id+1],obstacle_id=current_obstacle_id)
         for i in range(1,len(list_vertices)-1):
-            self.add_node(list_vertices[i],neighbours=[self.size_nodes-1,self.size_nodes+1])
+            self.add_node(list_vertices[i],neighbours=[self.size_nodes-1,self.size_nodes+1],obstacle_id=current_obstacle_id)
         #add last node of obstacle
-        self.add_node(list_vertices[-1],neighbours=[last_id-1,first_id])
+        self.add_node(list_vertices[-1],neighbours=[last_id-1,first_id],obstacle_id=current_obstacle_id)
         #add the obstacle polygon
         self.list_obstacles.append(Polygon(*tuple([self.list_nodes[i].point2d for i in range(first_id,last_id+1)])))
             
@@ -49,7 +51,6 @@ class Terrain:
         counter = 0
         for _node in self.list_nodes:
             _node.print()
-            #print("Real Node: " + str(counter))
             counter += 1
 
     def plot_visibility(self,node_id):
@@ -70,8 +71,16 @@ class Terrain:
             for node_b_id in range(node_a_id+1,self.size_nodes):
                 visibility_line = Segment(self.list_nodes[node_a_id].point2d,self.list_nodes[node_b_id].point2d)
                 visible = True
-                for _obstacle in self.list_obstacles:
-                    if len(_obstacle.intersection(visibility_line)) > 1:
+                for i in range(len(self.list_obstacles)):
+                    n_inter = len(self.list_obstacles[i].intersection(visibility_line))
+                    if self.list_nodes[node_a_id].obstacle_id == self.list_nodes[node_b_id].obstacle_id and self.list_nodes[node_a_id].obstacle_id == i:
+                        if n_inter > 2:
+                            visible = False
+                            break
+                        elif self.list_obstacles[i].encloses_point(visibility_line.midpoint):
+                            visible = False
+                            break
+                    elif n_inter > 1:
                         visible = False
                         break
                 if visible:
@@ -86,9 +95,6 @@ class Terrain:
         timeout = 0
         while (len(current_nodes_id) > 0) and (timeout < 20):
             timeout += 1
-            #print("New cycle")
-            #print(current_nodes_id)
-            #self.print()
             next_nodes_id = []
             for id_base in current_nodes_id:
                 for id_target in self.list_nodes[id_base].visibility_list:
