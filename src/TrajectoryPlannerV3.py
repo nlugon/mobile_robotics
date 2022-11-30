@@ -43,6 +43,7 @@ class Planner:
             self.add_node(position,"start",[])
         else:
             self.list_nodes[self.start_node_id] = Node(position,id=self.start_node_id,type="start",neighbours=[],obstacle_id=None)
+            self.update_visibility_node(planner.start_node_id)
 
     def set_end(self,position):
         if self.end_node_id == None:
@@ -65,13 +66,25 @@ class Planner:
         #add the obstacle polygon
         self.list_obstacles.append(Polygon(*tuple([self.list_nodes[i].point2d for i in range(first_id,last_id+1)])))
 
+    def block_visibility(self,node_a_id,node_b_id):
+        if node_a_id in self.list_nodes[node_b_id].visibility_list:
+            self.list_nodes[node_b_id].visibility_list.remove(node_a_id)
+        if node_b_id in self.list_nodes[node_a_id].visibility_list:
+            self.list_nodes[node_a_id].visibility_list.remove(node_b_id)
+
     def update_visibility_node(self,node_id,is_vertices=False):
         self.list_nodes[node_id].visibility_list = []
+        for _node_id in range(len(self.list_nodes)):
+            if node_id in self.list_nodes[_node_id].visibility_list:
+                self.list_nodes[_node_id].visibility_list.remove(node_id)
         for node_b in self.list_nodes:
             if node_b.id != node_id:
                 visibility_line = Segment(self.list_nodes[node_id].point2d,node_b.point2d)
                 visible = True
-                for obs_id in range(len(self.list_obstacles)):
+                optimized_obs_id = [i for i in range(len(self.list_obstacles))]
+                if node_b.obstacle_id != None:
+                    optimized_obs_id[0],optimized_obs_id[node_b.obstacle_id] = node_b.obstacle_id, 0
+                for obs_id in optimized_obs_id:
                     n_inter = len(self.list_obstacles[obs_id].intersection(visibility_line))
                     if n_inter > 1:
                         visible = False
@@ -114,7 +127,9 @@ class Planner:
                         node_b.visibility_list.append(node_a.id)
 
     def update_cost(self):
-        time_start = time.time()
+        #Reset cost
+        for _node_id in range(len(self.list_nodes)):
+            self.list_nodes[_node_id].access_cost = 0
         current_nodes_id = [self.start_node_id]
         timeout = 0
         while (len(current_nodes_id) > 0) and (timeout < 100):
@@ -128,7 +143,6 @@ class Planner:
                         self.list_nodes[id_target].access_node = id_base
                         next_nodes_id.append(id_target)
             current_nodes_id = list(set(next_nodes_id[:])) #remove duplicate ids
-        print("Time compute cost: {0}".format(time.time()-time_start))
 
     def get_path(self):
         path = [self.list_nodes[self.end_node_id].position]
@@ -144,7 +158,6 @@ class Planner:
     #adds the nodes of obstacles, adds polygons, computes visibility for each node
     def setup(self,obstacle_vertices,start_pos=None,end_pos=None):
         for _obstacle in obstacle_vertices:
-            print("NEW OBSTACLE : " + str(_obstacle))
             self.add_obstacle(_obstacle)
         if start_pos != None:
             self.set_start(start_pos)
@@ -155,6 +168,13 @@ class Planner:
         
 
     #===== DEBUG =====
+    def plot(self):
+        self.plot_polygons()
+        self.plot_node(self.start_node_id)
+        self.plot_node(self.end_node_id)
+        self.plot_path()
+        plt.show()
+
     def print(self):
         counter = 0
         for _node in self.list_nodes:
@@ -211,28 +231,23 @@ if __name__ == "__main__":
     cv_output = [[[[ 248,  848]],[[238, 1079]],[[ 765, 1075]],[[ 756,  814]],[[ 377,  805]]],
                 [[[1144,  810]],[[1146, 1079]],[[1674, 1079]],[[1661,  826]],[[1517,  796]]],
                 [[[ 581,    0]],[[ 583,  377]],[[ 710,  659]],[[1176,  680]],[[1193,  228]],[[1053,  205]],[[1049,    0]]]]
-    cv_start = [0,1200]
+    #cv_start = [0,1200]
+    cv_start = [200,1100]
     cv_end = [1300,400]
 
     #========== SETUP
     planner = Planner()
     planner.setup(cv_output,cv_start,cv_end)
-    planner.print()
-    planner.plot_polygons()
-    planner.plot_node(planner.start_node_id)
-    planner.plot_node(planner.end_node_id)
-    planner.plot_visibility(planner.start_node_id)
+    #planner.print()
+    planner.plot()
     print("OPTIMAL PATH: " + str(planner.get_path()))
-    planner.plot_path()
-    plt.show()
 
-    start_time = time.time()
-    planner.set_start([400,600])
-    planner.update_visibility_node(planner.start_node_id)
+    planner.set_start([0,0])
     planner.update_cost()
-    print("TIME FOR REPLANING: {0}s".format(time.time()-start_time))
-    planner.plot_polygons()
-    planner.plot_visibility(planner.start_node_id)
-    planner.plot_node(planner.end_node_id)
-    planner.plot_path()
-    plt.show()
+    #planner.print()
+    planner.plot()
+
+    planner.set_start([1400,1200])
+    planner.update_cost()
+    #planner.print()
+    planner.plot()
