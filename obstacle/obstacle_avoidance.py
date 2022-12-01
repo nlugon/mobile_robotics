@@ -1,5 +1,6 @@
 from tdmclient import ClientAsync
 import time
+import numpy as np
 # This function just goes around the obstacle till sensor distance is less than a threshold from each side (except the back)
 # it is a simple implementation, already working on a better one
 def move(left, right):
@@ -12,14 +13,22 @@ def move(left, right):
 def close_by(node, variables):
     try:
         
-        if any([x>2000 and x < 3500 for x in variables["prox.horizontal"]]):
+        if any([x>2500 and x < 3500 for x in variables["prox.horizontal"]]):
             print("wall very close") 
             #prox = variables["prox.horizontal"]
-            node.send_set_variables(move(30, -30))
-        elif any([x>3500 for x in variables["prox.horizontal"]]):
-            node.send_set_variables(move(0, 0))
-            
-            print("wall too close to be avoided by following")
+            var_prox= np.array(variables["prox.horizontal"])
+            if (var_prox[:1].sum() > var_prox[3:4].sum()) and (var_prox[2] < 3000):
+                node.send_set_variables(move(30, -30))
+            elif var_prox[2] > 3000: 
+                node.send_set_variables(move(30, -30))
+
+            else:
+                node.send_set_variables(move(-30, 30))
+
+            """elif any([x>3900 for x in variables["prox.horizontal"]]):
+                node.send_set_variables(move(0, 0))
+                
+                print("wall too close to be avoided by following")"""
 
         else :
             node.send_set_variables(move(50, 50))

@@ -128,7 +128,7 @@ class Vision:
         return center, radius, angle, thymio_detected
 
 
-    def get_obstacle_position(img, thymio_radius, min_green = np.array([30, 87, 0]), max_green = np.array([90, 255, 255])):
+    def get_obstacle_position(self,img, thymio_radius, min_green = np.array([30, 87, 0]), max_green = np.array([90, 255, 255])):
 
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         img_hsv_blur = cv2.medianBlur(img_hsv, 15)
