@@ -32,9 +32,10 @@ class Movement:
 
     async def turn_left(self,diff_orient):
         #90 degree turn
-        await self.robot_ctr.set_variables({"motor.left.target": [2**16-self.self.rotation_speed]})
+        await self.robot_ctr.set_variables({"motor.left.target": [2**16-self.rotation_speed]})
         await self.robot_ctr.set_variables({"motor.right.target": [self.rotation_speed]})
-        time.sleep(diff_orient*self.rot_delta_t)
+        #time.sleep(diff_orient*self.rot_delta_t)
+        time.sleep(2.33) 
         await self.stop()
 
     async def turn_right(self,diff_orient):
@@ -76,6 +77,7 @@ async def main():
     #await move_obj.stop()
     await move_obj.step_forward(3)
     await move_obj.turn_right(3)
+    await move_obj.turn_left(3)
     print("Variables loaded", node.var)
     
 
