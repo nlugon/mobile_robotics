@@ -17,7 +17,7 @@ class Vision:
         self.goal_pos = None
         self.obj_terrain = None
 
-    def get_goal_position(img, min_blue = np.array([70, 80, 0]), max_blue = np.array([120, 255, 255])):
+    def get_goal_position(self,img, min_blue = np.array([70, 80, 0]), max_blue = np.array([120, 255, 255])):
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         img_hsv_blur = cv2.medianBlur(img_hsv, 15)
         mask = cv2.inRange(img_hsv_blur, min_blue, max_blue)
