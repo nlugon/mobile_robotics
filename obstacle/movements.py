@@ -21,27 +21,30 @@ class Movement:
             "motor.right.target": [right],
         }
     async def stop(self):
-        await self.robot_ctr.set_variables({"motor.left.target": [0]})
-        await self.robot_ctr.set_variables({"motor.right.target": [0]})
+        await self.robot_ctr.set_variables({"motor.left.target": [0],
+                                            "motor.right.target": [0]})
 
     async def step_forward(self,forward_t):
-        await self.robot_ctr.set_variables({"motor.left.target": [self.forward_speed + self.left_wheel_offset]})
-        await self.robot_ctr.set_variables({"motor.right.target": [self.forward_speed + self.right_wheel_offset]})
+        await self.robot_ctr.set_variables({"motor.left.target": [self.forward_speed + self.left_wheel_offset],
+                                            "motor.right.target": [self.forward_speed + self.right_wheel_offset]})
+
         time.sleep(forward_t)
         await self.stop()
 
     async def turn_left(self,diff_orient):
         #90 degree turn
-        await self.robot_ctr.set_variables({"motor.left.target": [2**16-self.rotation_speed]})
-        await self.robot_ctr.set_variables({"motor.right.target": [self.rotation_speed]})
+        await self.robot_ctr.set_variables({"motor.left.target": [2**16-self.rotation_speed],
+                                            "motor.right.target": [self.rotation_speed]})
+  
         #time.sleep(diff_orient*self.rot_delta_t)
         time.sleep(2.33) 
         await self.stop()
 
     async def turn_right(self,diff_orient):
         #90 degree turn
-        await self.robot_ctr.set_variables({"motor.left.target": [self.rotation_speed]})
-        await self.robot_ctr.set_variables({"motor.right.target": [2**16-self.rotation_speed]})
+        await self.robot_ctr.set_variables({"motor.left.target": [self.rotation_speed],
+                                            "motor.right.target": [2**16-self.rotation_speed]})
+ 
         time.sleep(2.33) 
         await self.stop()
     
@@ -78,6 +81,8 @@ async def main():
     await move_obj.step_forward(3)
     await move_obj.turn_right(3)
     await move_obj.turn_left(3)
+    turn_ang = math.pi/4
+    move_obj.turn(turn_ang)
     print("Variables loaded", node.var)
     
 

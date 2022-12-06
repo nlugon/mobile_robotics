@@ -61,8 +61,6 @@ async def main():
     # if close then set motors to 0,0
 
 
-
-    #node.send_set_variables(move_obj.motors(100,100))
     #time.sleep(5)
     #node.send_set_variables(move_obj.motors(0,0))
     #time.sleep(2)
