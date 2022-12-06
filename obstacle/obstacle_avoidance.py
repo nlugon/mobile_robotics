@@ -57,6 +57,7 @@ def close_by(node, variables):
             # if error is too big, turn
             print("no obstacle")
             node.send_set_variables(move(100, 100))
+            
 
 
     except KeyError:
