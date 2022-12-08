@@ -35,13 +35,13 @@ def close_by(node, variables):
             else:
                 node.send_set_variables(move(-100, 100))
 
-        elif any([x>3900 for x in variables["prox.horizontal"]]):
+        elif any([x>3700 for x in variables["prox.horizontal"]]):
             print("obstacle is close")
             # ON PLACE ROTATION
             avoid = False
             #prox = variables["prox.horizontal"]
             var_prox= np.array(variables["prox.horizontal"])
-            if (var_prox[:1].sum() > var_prox[3:4].sum()) or (var_prox[2] > 3600):
+            if (var_prox[:1].sum() > var_prox[3:4].sum()):
                 node.send_set_variables(move(0, -100))
             elif var_prox[2] > 3600:
                 node.send_set_variables(move(0, -100))
