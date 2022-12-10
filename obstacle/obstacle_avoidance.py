@@ -36,16 +36,15 @@ def close_by(node, variables):
             else:
 
 
-                if any([x>21000 and x < 31000 for x in variables["prox.horizontal"]]):
+                if any([x>3000 and x < 3200 for x in variables["prox.horizontal"]]):
                     print("obstacle is very close") 
                     avoid = False
                     #prox = variables["prox.horizontal"]
                     var_prox= np.array(variables["prox.horizontal"])
-                    if (var_prox[:1].sum() > var_prox[3:4].sum()) and (var_prox[2] < 3000):
+                    if (var_prox[:1].sum() > var_prox[3:4].sum()):
                         node.send_set_variables(move(100, -100))
                     elif var_prox[2] > 3000: 
                         node.send_set_variables(move(100, -100))
-
                     else:
                         node.send_set_variables(move(-100, 100))
 
@@ -57,8 +56,6 @@ def close_by(node, variables):
                     var_prox= np.array(variables["prox.horizontal"])
                     if (var_prox[:1].sum() > var_prox[3:4].sum()):
                         node.send_set_variables(move(0, -100))
-                    elif var_prox[2] > 3600:
-                        node.send_set_variables(move(0, -100))
                     else:
                         node.send_set_variables(move(-100, 0))
 
@@ -66,11 +63,12 @@ def close_by(node, variables):
                     # follow path
                     avoid = True
                     # if position is not in the middle of the path
-                    
                     # call get position function and calculate the error
                     # if error is too big, turn
                     print("no obstacle")
                     node.send_set_variables(move(100, 100))
+                    
+
             
 
 
