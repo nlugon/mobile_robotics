@@ -2,12 +2,11 @@
 ## Abstract
 This final project represents a culmination of all of the topics covered during MICRO-452. The goal was to place a Thymio robot within an obstacle field, and use computer vision, path planning, global navigation, and local navigation to direct it to a goal. The first step of the process was to decide on the environment the Thymio would be placed within. We considered the examples provided from previous semesters, and eventually we decided on a simple white background with 3D colored blocks as obstacles.</br> The intention was to have enough contrast between the obstacles and the background to allow an accurate contour detection. </br>The goal and the Thymio were both identified using ArUco marker detection. This allowed for an accurate tracking of both the position and orientation of the Thymio, which were integral in applying a global navigation framework based on computer vision. We were able in this project to successfully perfom the global navigation **with and without** camera using the filtering, **avoid** the **obstacles** locally using sensor data and to do a **kidnapping** test.
 
-## Project goals
+## Demo
 
-Our main goals through this project are:
-    -todo
 
-## Methods
+## Implementation
+For the implementation of this project and a detailed description of each method used, please refer to the [notebook](MobileRobotics_Final_Report_Run.ipynb)
 
 ## timeline
 
