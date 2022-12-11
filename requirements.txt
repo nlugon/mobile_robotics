@@ -1,0 +1,6 @@
+matplotlib
+numpy
+sympy
+opencv-python
+opencv-contrib-python
+pandas

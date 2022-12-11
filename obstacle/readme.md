@@ -1,3 +1,0 @@
-## A simple obstacle avoidance
-This is just to test and will be expanded. 
-We need to have different states to exploit the sensor data. First an idle state where the robot waits for the gloabal navigation and path. then perfect_state, the robot is following the actual path and everything goes smoothly. An avoid obstacle state: here it will be divided based on a threshold and the manoeuvers possible based on the distance as in some cases if you are trapped, it is inavoidable to do inplace movements (not hard to implement/ we have done similiar just a small expension on setting the speed). The most significan state *rejoin optimal path* to go back to our path after successfully avoiding the obstacle with *minimum deviation* from the optimal path
