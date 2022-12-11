@@ -37,6 +37,6 @@ Our main goals through this project are:
 ### Project Dependencies 
 After activating your virtualenv in the root directory of the project install the necessary Dependencies by running
 ```bat
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 The requirement list will be updated and added along the project to make a reproducible code 
