@@ -7,7 +7,7 @@ This gif is a speedup of 2.5 compared to the actual run. for the actual timeing,
 ![](Demo/demo2.5x.gif)
 
 ## Implementation
-For the implementation of this project and a detailed description of each method used, please refer to the [notebook](MobileRobotics_Final_Report_Run.ipynb)
+For the implementation of this project and a detailed description of each method used, please refer to the [notebook](MobileRobotics_Final_Report.ipynb)
 
 ## timeline
 
